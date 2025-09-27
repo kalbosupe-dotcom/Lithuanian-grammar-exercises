@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rezultatų centras - Lietuvių kalbos užduotys</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #333; font-size: 36px; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 18px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; text-align: center; }
+        .stat-card h3 { font-size: 18px; margin-bottom: 10px; opacity: 0.9; }
+        .stat-card .number { font-size: 36px; font-weight: bold; margin-bottom: 5px; }
+        .stat-card .label { font-size: 14px; opacity: 0.8; }
+        .results-section { background: #f8f9fa; padding: 25px; border-radius: 15px; margin-bottom: 30px; }
+        .results-section h2 { color: #333; margin-bottom: 20px; font-size: 24px; }
+        .exercise-result { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #4CAF50; display: flex; justify-content: space-between; align-items: center; }
+        .exercise-info h4 { color: #333; margin-bottom: 5px; }
+        .exercise-info p { color: #666; font-size: 14px; }
+        .exercise-score { text-align: right; }
+        .score-number { font-size: 24px; font-weight: bold; color: #4CAF50; }
+        .score-percentage { font-size: 14px; color: #666; }
+        .progress-section { margin-bottom: 30px; }
+        .progress-bar { background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(45deg, #4CAF50, #45a049); transition: width 0.5s ease; }
+        .achievements { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .achievement { background: white; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #f0f0f0; }
+        .achievement.earned { border-color: #FFD700; background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
+        .achievement .icon { font-size: 32px; margin-bottom: 10px; }
+        .achievement .title { font-weight: bold; margin-bottom: 5px; }
+        .achievement .description { font-size: 12px; opacity: 0.8; }
+        .controls { text-align: center; margin-top: 30px; }
+        .btn { background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 0 10px; text-decoration: none; display: inline-block; transition: transform 0.3s ease; }
+        .btn:hover { transform: translateY(-2px); }
+        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+        .empty-state .icon { font-size: 64px; margin-bottom: 20px; opacity: 0.5; }
+        @media (max-width: 768px) { 
+            .container { padding: 20px; }
+            .header h1 { font-size: 28px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .exercise-result { flex-direction: column; text-align: center; }
+            .exercise-score { margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Rezultatų centras</h1>
+            <p>Jūsų pažanga lietuvių kalbos užduotyse</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- Statistikos kortelės bus užpildytos JavaScript -->
+        </div>
+
+        <div class="progress-section">
+            <h2>🎯 Bendras progresas</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="overallProgress"></div>
+            </div>
+            <p id="progressText">Užbaigta: 0 iš 0 užduočių</p>
+        </div>
+
+        <div class="results-section">
+            <h2>📋 Užduočių rezultatai</h2>
+            <div id="exerciseResults">
+                <!-- Rezultatai bus užpildyti JavaScript -->
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2>🏆 Pasiekimai</h2>
+            <div class="achievements" id="achievements">
+                <!-- Pasiekimai bus užpildyti JavaScript -->
+            </div>
+        </div>
+
+        <div class="controls">
+            <a href="index.html" class="btn">🏠 Grįžti į pagrindinį</a>
+            <button class="btn" onclick="exportResults()">📤 Eksportuoti rezultatus</button>
+            <button class="btn" onclick="clearAllResults()" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">🗑️ Išvalyti duomenis</button>
+        </div>
+    </div>
+
+<script>
+function loadResults() {
+    const results = JSON.parse(localStorage.getItem('kalbos-dalys-rezultatai') || '[]');
+    
+    if (results.length === 0) {
+        showEmptyState();
+        return;
+    }
+
+    displayStats(results);
+    displayProgress(results);
+    displayExerciseResults(results);
+    displayAchievements(results);
+}
+
+function showEmptyState() {
+    document.getElementById('statsGrid').innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="icon">📊</div>
+            <h3>Dar nėra rezultatų</h3>
+            <p>Pradėkite spręsti užduotis, kad matytumėte savo pažangą!</p>
+            <a href="index.html" class="btn" style="margin-top: 20px;">🚀 Pradėti užduotis</a>
+        </div>
+    `;
+}
+
+function displayStats(results) {
+    const totalExercises = results.length;
+    const totalScore = results.reduce((sum, r) => sum + r.score, 0);
+    const totalPossible = results.reduce((sum, r) => sum + r.total, 0);
+    const avgPercentage = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+    const perfectScores = results.filter(r => r.percentage === 100).length;
+
+    document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+            <h3>Užduočių atlikta</h3>
+            <div class="number">${totalExercises}</div>
+            <div class="label">iš viso</div>
+        </div>
+        <div class="stat-card">
+            <h3>Bendras tikslumas</h3>
+            <div class="number">${avgPercentage}%</div>
+            <div class="label">vidutinis rezultatas</div>
+        </div>
+        <div class="stat-card">
+            <h3>Tobuli rezultatai</h3>
+            <div class="number">${perfectScores}</div>
+            <div class="label">100% užduočių</div>
+        </div>
+        <div class="stat-card">
+            <h3>Taškai</h3>
+            <div class="number">${totalScore}</div>
+            <div class="label">iš ${totalPossible}</div>
+        </div>
+    `;
+}
+
+function displayProgress(results) {
+    const knownExercises = ['spalvu-pasaulis', 'zodziu-rusiuoklis', 'kas-yra-kas-4-dalys', '4-spalvu-rusiuoklis'];
+    const completedCount = knownExercises.filter(ex => results.some(r => r.exercise.includes(ex))).length;
+    const progressPercentage = (completedCount / knownExercises.length) * 100;
+
+    document.getElementById('overallProgress').style.width = progressPercentage + '%';
+    document.getElementById('progressText').textContent = `Užbaigta: ${completedCount} iš ${knownExercises.length} užduočių`;
+}
+
+function displayExerciseResults(results) {
+    const exerciseNames = {
+        'spalvu-pasaulis': '🎨 Spalvų pasaulis',
+        'zodziu-rusiuoklis': '📦 Žodžių rūšiuoklis (3 dalys)',
+        'kas-yra-kas-4-dalys': '🎯 Kas yra kas? (4 dalys)',
+        '4-spalvu-rusiuoklis': '🌈 4 spalvų rūšiuoklis'
+    };
+
+    const sortedResults = results.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+
+    const resultsHTML = sortedResults.map(result => {
+        const exerciseName = Object.keys(exerciseNames).find(key => result.exercise.includes(key)) || result.exercise;
+        const displayName = exerciseNames[exerciseName] || result.exercise;
+        const scoreColor = result.percentage >= 80 ? '#4CAF50' : result.percentage >= 60 ? '#FF9800' : '#f44336';
+
+        return `
+            <div class="exercise-result">
+                <div class="exercise-info">
+                    <h4>${displayName}</h4>
+                    <p>${result.date} ${result.time}</p>
+                </div>
+                <div class="exercise-score">
+                    <div class="score-number" style="color: ${scoreColor}">${result.score}/${result.total}</div>
+                    <div class="score-percentage">${result.percentage}%</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('exerciseResults').innerHTML = resultsHTML;
+}
+
+function displayAchievements(results) {
+    const achievements = [
+        {
+            icon: '🎯', title: 'Pirmasis žingsnis', description: 'Užbaigėte pirmą užduotį',
+            condition: results.length >= 1
+        },
+        {
+            icon: '⭐', title: 'Tobulas rezultatas', description: 'Gavote 100% užduotyje',
+            condition: results.some(r => r.percentage === 100)
+        },
+        {
+            icon: '🔥', title: 'Nuoseklumas', description: 'Užbaigėte 5 užduotis',
+            condition: results.length >= 5
+        },
+        {
+            icon: '🏆', title: 'Aukšti standartai', description: 'Vidutinis rezultatas >80%',
+            condition: results.length > 0 && (results.reduce((sum, r) => sum + r.percentage, 0) / results.length) > 80
+        }
+    ];
+
+    const achievementsHTML = achievements.map(achievement => `
+        <div class="achievement ${achievement.condition ? 'earned' : ''}">
+            <div class="icon">${achievement.icon}</div>
+            <div class="title">${achievement.title}</div>
+            <div class="description">${achievement.description}</div>
+        </div>
+    `).join('');
+
+    document.getElementById('achievements').innerHTML = achievementsHTML;
+}
+
+function exportResults() {
+    const results = JSON.parse(localStorage.getItem('kalbos-dalys-rezultatai') || '[]');
+    const dataStr = JSON.stringify(results, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'kalbos-rezultatai.json';
+    link.click();
+}
+
+function clearAllResults() {
+    if (confirm('Ar tikrai norite ištrinti visus rezultatus? Šio veiksmo negalima anuliuoti.')) {
+        localStorage.removeItem('kalbos-dalys-rezultatai');
+        location.reload();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadResults);
+</script>
+</body>
+</html>
