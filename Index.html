@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lietuvių kalbos užduotys - 7 klasė</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 20px; 
+            padding: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+        .header h1 { 
+            font-size: 36px; 
+            margin-bottom: 10px; 
+        }
+        .header p { 
+            font-size: 18px; 
+            opacity: 0.9;
+        }
+        .progress-overview {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .levels-container {
+            margin-bottom: 30px;
+        }
+        .level-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .level-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .level-title {
+            font-size: 24px;
+            color: #333;
+        }
+        .level-progress {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            width: 150px;
+            overflow: hidden;
+        }
+        .level-progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            transition: width 0.5s ease;
+        }
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .exercise-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .exercise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #4CAF50;
+        }
+        .exercise-card.completed {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+        }
+        .exercise-card.completed::after {
+            content: '✅';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+        }
+        .exercise-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        .exercise-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .exercise-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        .exercise-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        .exercise-score {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn.secondary {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+        }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .header h1 { font-size: 28px; }
+            .exercises-grid { grid-template-columns: 1fr; }
+            .level-header { flex-direction: column; gap: 15px; }
+            .progress-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Lietuvių kalbos užduotys</h1>
+            <p>7 klasės gramatikos kursas</p>
+        </div>
+
+        <div class="progress-overview">
+            <h2>🎯 Jūsų pažanga</h2>
+            <div class="progress-stats" id="progressStats">
+                <!-- Bus užpildyta JavaScript -->
+            </div>
+        </div>
+
+        <div class="levels-container">
+            <div class="level-section">
+                <div class="level-header">
+                    <h2 class="level-title">📖 LYGIS 1: PAŽINIMAS</h2>
+                    <div class="level-progress">
+                        <div class="level-progress-fill" id="level1Progress"></div>
+                    </div>
+                </div>
+                <div class="exercises-grid" id="level1Exercises">
+                    <!-- Bus užpildyta JavaScript -->
+                </div>
+            </div>
+
+            <div class="level-section">
+                <div class="level-header">
+                    <h2 class="level-title">🧠 LYGIS 2: SUPRATIMAS</h2>
+                    <div class="level-progress">
+                        <div class="level-progress-fill" id="level2Progress"></div>
+                    </div>
+                </div>
+                <div class="exercises-grid" id="level2Exercises">
+                    <div class="exercise-card" style="opacity: 0.6;">
+                        <div class="exercise-icon">🔒</div>
+                        <div class="exercise-title">Žodžių šeimos</div>
+                        <div class="exercise-description">Išmokite, kaip žodžiai keičiasi tarp kalbos dalių</div>
+                        <div class="exercise-meta">
+                            <span>Netrukus...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <a href="results-center.html" class="btn">📊 Rezultatų centras</a>
+            <button class="btn secondary" onclick="resetProgress()">🔄 Iš naujo</button>
+        </div>
+    </div>
+<script>
+const exercises = [
+    {
+        id: 'spalvu-pasaulis',
+        title: '🎨 Spalvų pasaulis',
+        description: 'Išmokite 3 pagrindinių kalbos dalių spalvas ir simbolius',
+        file: 'Sintra_Kalbos-dalys_1.1.Spalvu-kodai-(D-B-V).html',
+        level: 1,
+        order: 1
+    },
+    {
+        id: 'zodziu-rusiuoklis',
+        title: '📦 Žodžių rūšiuoklis (3 dalys)',
+        description: 'Praktiškai rūšiuokite žodžius į 3 grupes',
+        file: 'Sintra_Kalbos-dalys_1.2.Rusiuoklis-(D-B-V).html',
+        level: 1,
+        order: 2
+    },
+    {
+        id: 'kas-yra-kas-4-dalys',
+        title: '🎯 Kas yra kas? (4 dalys)',
+        description: 'Atpažinkite visas 4 kalbos dalis su prieveiksmiu',
+        file: 'Sintra_Kalbos-dalys_1.3.Spalvu-kodai-(D-B-V-P).html',
+        level: 1,
+        order: 3
+    },
+    {
+        id: '4-spalvu-rusiuoklis',
+        title: '🌈 4 spalvų rūšiuoklis',
+        description: 'Rūšiuokite žodžius į 4 spalvotas dėžutes',
+        file: 'Sintra_Kalbos-dalys_1.4.Rusiuoklis-(D-B-V-P).html',
+        level: 1,
+        order: 4
+    }
+];
+
+function loadProgress() {
+    const results = JSON.parse(localStorage.getItem('kalbos-dalys-rezultatai') || '[]');
+    
+    displayProgressStats(results);
+    displayLevel1Exercises(results);
+    updateLevelProgress(results);
+}
+
+function displayProgressStats(results) {
+    const totalExercises = exercises.length;
+    const completedExercises = exercises.filter(ex => 
+        results.some(r => r.exercise.includes(ex.id))
+    ).length;
+    const totalScore = results.reduce((sum, r) => sum + r.score, 0);
+    const totalPossible = results.reduce((sum, r) => sum + r.total, 0);
+    const avgPercentage = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+
+    document.getElementById('progressStats').innerHTML = `
+        <div class="stat-item">
+            <div class="stat-number">${completedExercises}</div>
+            <div class="stat-label">iš ${totalExercises} užduočių</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">${avgPercentage}%</div>
+            <div class="stat-label">vidutinis rezultatas</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">${totalScore}</div>
+            <div class="stat-label">surinkta taškų</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">${results.filter(r => r.percentage === 100).length}</div>
+            <div class="stat-label">tobuli rezultatai</div>
+        </div>
+    `;
+}
+
+function displayLevel1Exercises(results) {
+    const level1Exercises = exercises.filter(ex => ex.level === 1).sort((a, b) => a.order - b.order);
+    
+    const exercisesHTML = level1Exercises.map(exercise => {
+        const result = results.find(r => r.exercise.includes(exercise.id));
+        const isCompleted = !!result;
+        const scoreDisplay = result ? `<span class="exercise-score">${result.score}/${result.total}</span>` : '<span>Nepradėta</span>';
+        
+        return `
+            <div class="exercise-card ${isCompleted ? 'completed' : ''}" onclick="openExercise('${exercise.file}')">
+                <div class="exercise-icon">${exercise.title.split(' ')[0]}</div>
+                <div class="exercise-title">${exercise.title.substring(2)}</div>
+                <div class="exercise-description">${exercise.description}</div>
+                <div class="exercise-meta">
+                    <span>1.${exercise.order} užduotis</span>
+                    ${scoreDisplay}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    document.getElementById('level1Exercises').innerHTML = exercisesHTML;
+}
+
+function updateLevelProgress(results) {
+    const level1Exercises = exercises.filter(ex => ex.level === 1);
+    const level1Completed = level1Exercises.filter(ex => 
+        results.some(r => r.exercise.includes(ex.id))
+    ).length;
+    const level1Progress = (level1Completed / level1Exercises.length) * 100;
+    
+    document.getElementById('level1Progress').style.width = level1Progress + '%';
+}
+
+function openExercise(filename) {
+    window.open(filename, '_blank');
+}
+
+function resetProgress() {
+    if (confirm('Ar tikrai norite ištrinti visą pažangą? Šio veiksmo negalima anuliuoti.')) {
+        localStorage.removeItem('kalbos-dalys-rezultatai');
+        location.reload();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadProgress);
+</script>
+</body>
+</html>
